@@ -1,0 +1,301 @@
+require 'config'
+require 'raylib'
+require 'piece'
+require 'board'
+require 'timer'
+require 'string'
+
+global Game = @record {
+  board: Board,
+  cur_piece: Piece,
+  next_piece: Piece,
+  preview_piece: Piece,
+  xmove_timer: Timer,
+  ymove_timer: Timer,
+  slide_vert_timer: Timer,
+  paused: boolean,
+  score: integer,
+  lines: integer,
+  level: integer,
+  hit_sound: Sound,
+  lineclear_sound: Sound,
+  levelup_sound: Sound,
+  soundtrack: Music
+}
+
+function Game:load_assets()
+  self.hit_sound = Raylib.LoadSound('assets/hit.wav')
+  self.lineclear_sound = Raylib.LoadSound('assets/lineclear.wav')
+  self.levelup_sound = Raylib.LoadSound('assets/levelup.wav')
+  self.soundtrack = Raylib.LoadMusicStream('assets/soundtrack.ogg')
+  Raylib.PlayMusicStream(self.soundtrack)
+end
+
+function Game:destroy_assets()
+  Raylib.UnloadMusicStream(self.soundtrack)
+  Raylib.UnloadSound(self.hit_sound)
+  Raylib.UnloadSound(self.lineclear_sound)
+  Raylib.UnloadSound(self.levelup_sound)
+end
+
+function Game:slide_piece_waydown(piece: Piece*)
+  for y=1,VERT_CELLS do
+    piece.y = piece.y + 1
+    if self.board:piece_collides(piece) then
+      break
+    end
+  end
+  piece.y = piece.y - 1
+end
+
+function Game:update_preview_piece()
+  self.preview_piece = self.cur_piece
+  self:slide_piece_waydown(self.preview_piece)
+end
+
+function Game:spawn_piece()
+  local piece = self.next_piece
+  if self.board:piece_collides(piece) then
+    return false
+  end
+  self.cur_piece = piece
+  self.next_piece = Piece.random_piece()
+  self:update_preview_piece()
+  return true
+end
+
+function Game:new_game()
+  math.randomseed(Raylib.GetTime())
+  self.board.cells = {}
+  self.score = 0
+  self.lines = 0
+  self.level = 1
+  self.slide_vert_timer:restart()
+  self.xmove_timer:restart()
+  self.ymove_timer:restart()
+  self.next_piece = Piece.random_piece()
+  self.cur_piece = Piece.random_piece()
+  self:update_preview_piece()
+end
+
+function Game:clear_lines()
+  local num_lines = self.board:clear_lines()
+  local points = 0
+  if num_lines == 4 then
+    points = 1200
+  elseif num_lines == 3 then
+    points = 300
+  elseif num_lines == 2 then
+    points = 100
+  elseif num_lines == 1 then
+    points = 40
+  end
+  if points > 0 then
+    Raylib.PlaySound(self.lineclear_sound)
+    self.lines = self.lines + num_lines
+    local level = 1 + (self.lines // 10)
+    if self.level ~= level then
+      Raylib.PlaySound(self.levelup_sound)
+      self.level = level
+    end
+    self.score = self.score + points
+  end
+end
+
+function Game:slide_current_piece(xoff: integer, yoff: integer)
+  local piece = self.cur_piece
+  piece:translate(xoff, yoff)
+  if self.board:piece_collides(piece) then
+    return false
+  end
+  self.cur_piece = piece
+  self:update_preview_piece()
+  return true
+end
+
+function Game:fit_piece(piece: Piece*): boolean
+  if not self.board:piece_collides(piece) then
+    return true
+  end
+  local newpiece = $piece
+  for ix=1,2 do
+    newpiece.x = piece.x + ix
+    if not self.board:piece_collides(newpiece) then
+      piece.x = newpiece.x
+      return true
+    end
+    newpiece.x = piece.x - ix
+    if not self.board:piece_collides(newpiece) then
+      piece.x = newpiece.x
+      return true
+    end
+  end
+  newpiece = $piece
+  for iy=1,3 do
+    newpiece.y = piece.y - iy
+    if not self.board:piece_collides(newpiece) then
+      piece.y = newpiece.y
+      return true
+    end
+  end
+  return false
+end
+
+function Game:rotate_current_piece(left: boolean): boolean
+  local piece = self.cur_piece
+  if left then
+    piece:rotate_left()
+  else
+    piece:rotate_right()
+  end
+  if not self:fit_piece(piece) then
+    return false
+  end
+  self.cur_piece = piece
+  self:update_preview_piece()
+  return true
+end
+
+function Game:place_current_piece()
+  Raylib.PlaySound(self.hit_sound)
+  self.board:place_piece(self.cur_piece)
+  self:clear_lines()
+  if not self:spawn_piece() then
+    self:new_game()
+  end
+end
+
+function Game:pause()
+  self.paused = true
+  Raylib.PauseMusicStream(self.soundtrack)
+end
+
+function Game:unpause()
+  self.paused = false
+  self.slide_vert_timer:restart()
+  Raylib.ResumeMusicStream(self.soundtrack)
+end
+
+function Game:update()
+  if self.paused then
+    if Raylib.IsKeyPressed(KeyboardKey.KEY_P) then
+      self:unpause()
+    end
+    return
+  end
+
+  local gesture = Raylib.GetGestureDetected()
+  local XMOVE_COOLDOWN = 0.08
+  local YMOVE_COOLDOWN = 0.05
+  local INTERVAL_DECAY = 0.03
+  local slide_interval = 0.5 - (self.level - 1)*INTERVAL_DECAY
+
+  -- check slide to the left/right
+  local colided = false
+  if self.xmove_timer:elapsed() >= XMOVE_COOLDOWN then
+    if Raylib.IsKeyDown(KeyboardKey.KEY_LEFT) or gesture == GestureType.GESTURE_SWIPE_LEFT then
+      self.xmove_timer:restart()
+      self:slide_current_piece(-1, 0)
+    elseif Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT) or gesture == GestureType.GESTURE_SWIPE_RIGHT then
+      self.xmove_timer:restart()
+      self:slide_current_piece(1, 0)
+    end
+  end
+  if self.ymove_timer:elapsed() >= YMOVE_COOLDOWN then
+    if Raylib.IsKeyDown(KeyboardKey.KEY_DOWN) or gesture == GestureType.GESTURE_SWIPE_DOWN then
+      self.ymove_timer:restart()
+      self.slide_vert_timer:restart()
+      if not self:slide_current_piece(0, 1) then
+        self:place_current_piece()
+      end
+    end
+  end
+
+  if Raylib.IsKeyPressed(KeyboardKey.KEY_UP) or gesture == GestureType.GESTURE_SWIPE_UP then
+    self:rotate_current_piece(false)
+  elseif Raylib.IsKeyPressed(KeyboardKey.KEY_Z) then
+    self:rotate_current_piece(true)
+  elseif Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE) or gesture == GestureType.GESTURE_DOUBLETAP then
+    self.slide_vert_timer:restart()
+    self:slide_piece_waydown(self.cur_piece)
+    self:place_current_piece()
+  elseif Raylib.IsKeyPressed(KeyboardKey.KEY_R) then
+    self:new_game()
+  elseif Raylib.IsKeyPressed(KeyboardKey.KEY_P) then
+    self:pause()
+  end
+
+  -- slide down automatically
+  if self.slide_vert_timer:elapsed() >= slide_interval then
+    self.slide_vert_timer:restart()
+    if not self:slide_current_piece(0, 1) then
+      self:place_current_piece()
+    end
+  end
+end
+
+local function draw_centered_text(text: stringview, rect: Rectangle, fontsize: integer, fgcolor: Color)
+  if #text == 0 then return end
+  local font = Raylib.GetFontDefault()
+  local spacing = math.ceil(fontsize / 20)
+  local textsize = Raylib.MeasureTextEx(font, text, fontsize, spacing)
+  local pos: Vector2 = { rect.x + (rect.width - textsize.x) // 2,
+                         rect.y + (rect.height - textsize.y) // 2 }
+  Raylib.DrawTextEx(font, text, pos, fontsize, spacing, fgcolor)
+end
+
+local function draw_titled_number(title: stringview, num: integer, rect: Rectangle)
+  local BGCOLOR: Color = {r=0x11,g=0x11,b=0x11,a=0xff}
+  local titlerect: Rectangle = {rect.x, rect.y - 35, rect.width, 30}
+  local text = tostring(num)
+  defer text:destroy() end
+  Raylib.DrawRectangleRec(rect, BGCOLOR)
+  Raylib.DrawRectangleLinesEx(rect, 2, DARKGRAY)
+  draw_centered_text(title, titlerect, 30, GOLD)
+  draw_centered_text(text, rect, 40, RAYWHITE)
+end
+
+function Game:draw_score()
+  draw_titled_number('Score', self.score, {30, 320, 230, 50})
+  draw_titled_number('Level', self.level, {30, 420, 230, 50})
+  draw_titled_number('Lines', self.lines, {30, 520, 230, 50})
+end
+
+function Game:draw_hotkeys()
+  local font = Raylib.GetFontDefault()
+  local text = [[LEFT  -  Move Left
+RIGHT  -  Move Right
+UP  -  Rotate Right
+DOWN  -  Soft Drop
+SPACE  -  Hard Drop
+Z  -  Rotate Left
+R  -  New Game]]
+  Raylib.DrawTextEx(font, text, {x=30, y=620}, 20, 1, LIGHTGRAY)
+end
+
+function Game:draw_next_piece()
+  local BGCOLOR: Color = {r=0x11,g=0x11,b=0x11,a=0xff}
+  local rect: Rectangle = {30, 80, 230, 180}
+  local titlerect: Rectangle = {rect.x, rect.y - 35, rect.width, 30}
+  Raylib.DrawRectangleRec(rect, BGCOLOR)
+  Raylib.DrawRectangleLinesEx(rect, 2, DARKGRAY)
+  draw_centered_text('Next', titlerect, 30, GOLD)
+  local x = rect.x + (rect.width - self.next_piece.width*CELL_SIZE) // 2
+  local y = rect.y + (rect.height - self.next_piece.height*CELL_SIZE) // 2
+  self.next_piece:draw(x, y, false)
+end
+
+function Game:draw_piece()
+  self.board:draw_piece(self.cur_piece, false)
+  self.board:draw_piece(self.preview_piece, true)
+end
+
+function Game:draw()
+  Raylib.ClearBackground(BLACK)
+  self:draw_score()
+  self.board:draw()
+  self:draw_next_piece()
+  self:draw_piece()
+  self:draw_hotkeys()
+  Raylib.UpdateMusicStream(self.soundtrack)
+end

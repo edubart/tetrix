@@ -1,0 +1,18 @@
+require 'raylib'
+
+local fame_time: float32
+global Timer = @record {
+  start_time: number
+}
+
+function Timer:elapsed(): number
+  return fame_time - self.start_time
+end
+
+function Timer:restart()
+  self.start_time = fame_time
+end
+
+function Timer.update_frame()
+  fame_time = Raylib.GetTime()
+end

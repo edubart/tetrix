@@ -1,0 +1,32 @@
+
+##[[
+-- disable the garbage collector
+context.globalpragmas.nogc = true
+
+local compiler = require 'nelua.ccompiler'
+if compiler.get_cc_info().is_emscripten then
+  PLATFORM_WEB = true
+  primtypes.integer = primtypes.int32
+  primtypes.uinteger = primtypes.uint32
+  primtypes.number = primtypes.float32
+  cflags '-Oz -fno-plt -flto'
+  cflags '-DGRAPHICS_API_OPENGL_ES2'
+  cflags '-s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s TOTAL_MEMORY=16777216'
+  cflags '-I/home/bart/apps/raylib/src /home/bart/apps/raylib/build.web/src/libraylib.bc'
+  cflags '--preload-file assets'
+else
+  linklib 'raylib'
+end
+]]
+
+
+global CELL_SIZE <comptime> = 48
+global VERT_CELLS <comptime> = 20
+global HORZ_CELLS <comptime> = 10
+global GRID_WIDTH <comptime> = CELL_SIZE*HORZ_CELLS
+global GRID_HEIGHT <comptime> = CELL_SIZE*VERT_CELLS
+global SCREEN_WIDTH <comptime> = CELL_SIZE*HORZ_CELLS + 320
+global SCREEN_HEIGHT <comptime> = CELL_SIZE*VERT_CELLS + 60
+global GRID_OFFSET_X <comptime> = 290
+global GRID_OFFSET_Y <comptime> = 30
+global CELL_MARGIN <comptime> = 1

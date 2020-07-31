@@ -1,0 +1,42 @@
+require 'game'
+
+-- Setup window
+## if not PLATFORM_WEB then
+  Raylib.SetTargetFPS(60)
+## end
+Raylib.SetGesturesEnabled(GestureType.GESTURE_SWIPE_UP |
+                          GestureType.GESTURE_SWIPE_DOWN |
+                          GestureType.GESTURE_SWIPE_LEFT |
+                          GestureType.GESTURE_SWIPE_RIGHT |
+                          GestureType.GESTURE_DOUBLETAP)
+Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tetris Game")
+Raylib.InitAudioDevice()
+Raylib.SetMasterVolume(0.8)
+
+-- Initialize game
+local game: Game
+game:load_assets()
+game:new_game()
+
+local function frame()
+  Timer.update_frame()
+  game:update()
+  Raylib.BeginDrawing()
+  game:draw()
+  Raylib.EndDrawing()
+end
+
+-- Main game loop
+## if PLATFORM_WEB then
+  local function emscripten_set_main_loop(func: function(), fps: cint, infloop: cint) <cimport,cinclude'<emscripten.h>',nodecl> end
+  emscripten_set_main_loop(frame, 0, 1)
+## else
+  repeat
+    frame()
+  until Raylib.WindowShouldClose()
+## end
+
+-- Cleanup
+game:destroy_assets()
+Raylib.CloseAudioDevice()
+Raylib.CloseWindow()
