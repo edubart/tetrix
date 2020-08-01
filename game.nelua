@@ -4,6 +4,7 @@ require 'piece'
 require 'board'
 require 'timer'
 require 'string'
+require 'math'
 
 global Game = @record {
   board: Board,
@@ -65,7 +66,6 @@ function Game:spawn_piece()
 end
 
 function Game:new_game()
-  math.randomseed(Raylib.GetTime())
   self.board.cells = {}
   self.score = 0
   self.lines = 0

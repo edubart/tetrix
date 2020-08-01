@@ -1,4 +1,6 @@
 require 'game'
+require 'math'
+require 'os'
 
 -- Setup window
 ## if not PLATFORM_WEB then
@@ -12,6 +14,9 @@ Raylib.SetGesturesEnabled(GestureType.GESTURE_SWIPE_UP |
 Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tetris Game")
 Raylib.InitAudioDevice()
 Raylib.SetMasterVolume(0.8)
+
+-- Seed random
+math.randomseed(os.time())
 
 -- Initialize game
 local game: Game
