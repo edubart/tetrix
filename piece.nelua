@@ -8,11 +8,11 @@ global Piece = @record{
   width: integer,
   height: integer,
   size: integer,
-  layout: byte[4][4],
+  layout: [4][4]byte,
   color: Color
 }
 
-global PIECES: Piece[7] = {
+global PIECES: [7]Piece = {
   { size=4, layout={
       {0,0,0,0},
       {1,1,1,1},

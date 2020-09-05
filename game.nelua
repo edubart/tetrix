@@ -39,7 +39,7 @@ function Game:destroy_assets()
   Raylib.UnloadSound(self.levelup_sound)
 end
 
-function Game:slide_piece_waydown(piece: Piece*)
+function Game:slide_piece_waydown(piece: *Piece)
   for y=1,VERT_CELLS do
     piece.y = piece.y + 1
     if self.board:piece_collides(piece) then
@@ -113,7 +113,7 @@ function Game:slide_current_piece(xoff: integer, yoff: integer)
   return true
 end
 
-function Game:fit_piece(piece: Piece*): boolean
+function Game:fit_piece(piece: *Piece): boolean
   if not self.board:piece_collides(piece) then
     return true
   end

@@ -3,10 +3,10 @@ require 'raylib'
 require 'piece'
 
 global Board = @record{
-  cells: Color[HORZ_CELLS][VERT_CELLS]
+  cells: [VERT_CELLS][HORZ_CELLS]Color
 }
 
-function Board:piece_collides(piece: Piece*)
+function Board:piece_collides(piece: *Piece)
   for iy=0,piece.size-1 do
     for ix=0,piece.size-1 do
       local tx, ty = piece.x+ix, piece.y+iy
@@ -23,7 +23,7 @@ function Board:piece_collides(piece: Piece*)
   return false
 end
 
-function Board:place_piece(piece: Piece*)
+function Board:place_piece(piece: *Piece)
   for iy=0,piece.size-1 do
     for ix=0,piece.size-1 do
       local tx, ty = piece.x+ix, piece.y+iy
@@ -99,7 +99,7 @@ function Board:draw()
   end
 end
 
-function Board:draw_piece(piece: Piece*, shallow: boolean)
+function Board:draw_piece(piece: *Piece, shallow: boolean)
   local x = GRID_OFFSET_X + piece.x*CELL_SIZE
   local y = GRID_OFFSET_Y + piece.y*CELL_SIZE
   piece:draw(x, y, shallow)
