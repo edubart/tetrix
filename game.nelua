@@ -234,7 +234,7 @@ function Game:update()
   end
 end
 
-local function draw_centered_text(text: stringview, rect: Rectangle, fontsize: integer, fgcolor: Color)
+local function draw_centered_text(text: string, rect: Rectangle, fontsize: integer, fgcolor: Color)
   if #text == 0 then return end
   local font = Raylib.GetFontDefault()
   local spacing = math.ceil(fontsize / 20)
@@ -244,7 +244,7 @@ local function draw_centered_text(text: stringview, rect: Rectangle, fontsize: i
   Raylib.DrawTextEx(font, text, pos, fontsize, spacing, fgcolor)
 end
 
-local function draw_titled_number(title: stringview, num: integer, rect: Rectangle)
+local function draw_titled_number(title: string, num: integer, rect: Rectangle)
   local BGCOLOR: Color = {r=0x11,g=0x11,b=0x11,a=0xff}
   local titlerect: Rectangle = {rect.x, rect.y - 35, rect.width, 30}
   local text = tostring(num)
