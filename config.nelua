@@ -1,7 +1,7 @@
 
 ##[[
 -- disable the garbage collector
-context.globalpragmas.nogc = true
+pragmas.nogc = true
 
 local compiler = require 'nelua.ccompiler'
 if compiler.get_cc_info().is_emscripten then
