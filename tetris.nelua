@@ -4,16 +4,16 @@ require 'os'
 
 -- Setup window
 ## if not PLATFORM_WEB then
-  Raylib.SetTargetFPS(60)
+  SetTargetFPS(60)
 ## end
-Raylib.SetGesturesEnabled(GestureType.GESTURE_SWIPE_UP |
-                          GestureType.GESTURE_SWIPE_DOWN |
-                          GestureType.GESTURE_SWIPE_LEFT |
-                          GestureType.GESTURE_SWIPE_RIGHT |
-                          GestureType.GESTURE_DOUBLETAP)
-Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tetris Game")
-Raylib.InitAudioDevice()
-Raylib.SetMasterVolume(0.8)
+SetGesturesEnabled(GESTURE_SWIPE_UP |
+                          GESTURE_SWIPE_DOWN |
+                          GESTURE_SWIPE_LEFT |
+                          GESTURE_SWIPE_RIGHT |
+                          GESTURE_DOUBLETAP)
+InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tetris Game")
+InitAudioDevice()
+SetMasterVolume(0.8)
 
 -- Seed random
 math.randomseed(os.time())
@@ -26,9 +26,9 @@ game:new_game()
 local function frame()
   Timer.update_frame()
   game:update()
-  Raylib.BeginDrawing()
+  BeginDrawing()
   game:draw()
-  Raylib.EndDrawing()
+  EndDrawing()
 end
 
 -- Main game loop
@@ -38,10 +38,10 @@ end
 ## else
   repeat
     frame()
-  until Raylib.WindowShouldClose()
+  until WindowShouldClose()
 ## end
 
 -- Cleanup
 game:destroy_assets()
-Raylib.CloseAudioDevice()
-Raylib.CloseWindow()
+CloseAudioDevice()
+CloseWindow()

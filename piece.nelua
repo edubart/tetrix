@@ -117,11 +117,11 @@ function Piece.draw_cell(x: integer, y: integer, color: Color, shallow: boolean)
     width = CELL_SIZE - CELL_MARGIN,
     height = CELL_SIZE - CELL_MARGIN
   }
-  local fill_color = Raylib.Fade(color, 0.75)
+  local fill_color = Fade(color, 0.75)
   if not shallow then
-    Raylib.DrawRectangleRec(rect, fill_color)
+    DrawRectangleRec(rect, fill_color)
   end
-  Raylib.DrawRectangleLinesEx(rect, 2, color)
+  DrawRectangleLinesEx(rect, 2, color)
 end
 
 function Piece:draw(x: integer, y: integer, shallow: boolean)

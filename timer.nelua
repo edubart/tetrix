@@ -14,5 +14,5 @@ function Timer:restart()
 end
 
 function Timer.update_frame()
-  fame_time = Raylib.GetTime()
+  fame_time = GetTime()
 end
