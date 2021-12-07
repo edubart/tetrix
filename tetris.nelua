@@ -1,6 +1,7 @@
-require 'game'
 require 'math'
 require 'os'
+local Game = require 'game'
+local Timer = require 'timer'
 
 -- Setup window
 ## if not PLATFORM_WEB then

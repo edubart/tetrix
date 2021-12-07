@@ -1,12 +1,13 @@
 require 'config'
 require 'raylib'
-require 'piece'
-require 'board'
-require 'timer'
 require 'string'
 require 'math'
 
-global Game = @record {
+local Piece = require 'piece'
+local Board = require 'board'
+local Timer = require 'timer'
+
+local Game = @record {
   board: Board,
   cur_piece: Piece,
   next_piece: Piece,
@@ -299,3 +300,5 @@ function Game:draw()
   self:draw_hotkeys()
   UpdateMusicStream(self.soundtrack)
 end
+
+return Game

@@ -1,8 +1,9 @@
 require 'config'
 require 'raylib'
-require 'piece'
 
-global Board = @record{
+local Piece: type = require 'piece'
+
+local Board = @record{
   cells: [VERT_CELLS][HORZ_CELLS]Color
 }
 
@@ -104,3 +105,5 @@ function Board:draw_piece(piece: *Piece, shallow: boolean)
   local y = GRID_OFFSET_Y + piece.y*CELL_SIZE
   piece:draw(x, y, shallow)
 end
+
+return Board
