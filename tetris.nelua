@@ -1,29 +1,8 @@
-##[[
-local nldecl = require 'nelua.plugins.nldecl'
-nldecl.generate_bindings_file{
-  output_file = 'raylib-bindings.nelua',
-  parse_includes = {
-    '<raylib.h>',
-    '<raymath.h>',
-  },
-  include_names = {
-    '^[A-Z]',
-  }
-}
-
-cinclude '<raylib.h>'
-cinclude '<raymath.h>'
-linklib 'raylib'
-if ccinfo.is_windows then
-  linklib 'glfw3'
-else
-  linklib 'glfw'
-end
-]]
-
+require 'config'
 require 'raylib-bindings'
 require 'math'
 require 'os'
+
 local Game = require 'game'
 local Timer = require 'timer'
 

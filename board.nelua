@@ -1,5 +1,5 @@
 require 'config'
-require 'raylib'
+require 'raylib-bindings'
 
 local Piece: type = require 'piece'
 

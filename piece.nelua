@@ -1,5 +1,5 @@
 require 'config'
-require 'raylib'
+require 'raylib-bindings'
 require 'math'
 
 local Piece = @record{

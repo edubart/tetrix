@@ -16,6 +16,55 @@ if compiler.get_cc_info().is_emscripten then
 else
   linklib 'raylib'
 end
+
+local nldecl = require 'nelua.plugins.nldecl'
+nldecl.generate_bindings_file{
+  output_file = 'raylib-bindings.nelua',
+  parse_includes = {
+    '<raylib.h>',
+    '<raymath.h>',
+  },
+  include_names = {
+    '^[A-Z]',
+  },
+  output_foot = [=[
+global LIGHTGRAY: Color <cimport,nodecl>
+global GRAY: Color <cimport,nodecl>
+global DARKGRAY: Color <cimport,nodecl>
+global YELLOW: Color <cimport,nodecl>
+global GOLD: Color <cimport,nodecl>
+global ORANGE: Color <cimport,nodecl>
+global PINK: Color <cimport,nodecl>
+global RED: Color <cimport,nodecl>
+global MAROON: Color <cimport,nodecl>
+global GREEN: Color <cimport,nodecl>
+global LIME: Color <cimport,nodecl>
+global DARKGREEN: Color <cimport,nodecl>
+global SKYBLUE: Color <cimport,nodecl>
+global BLUE: Color <cimport,nodecl>
+global DARKBLUE: Color <cimport,nodecl>
+global PURPLE: Color <cimport,nodecl>
+global VIOLET: Color <cimport,nodecl>
+global DARKPURPLE: Color <cimport,nodecl>
+global BEIGE: Color <cimport,nodecl>
+global BROWN: Color <cimport,nodecl>
+global DARKBROWN: Color <cimport,nodecl>
+global WHITE: Color <cimport,nodecl>
+global BLACK: Color <cimport,nodecl>
+global BLANK: Color <cimport,nodecl>
+global MAGENTA: Color <cimport,nodecl>
+global RAYWHITE: Color <cimport,nodecl>
+]=]
+}
+
+cinclude '<raylib.h>'
+cinclude '<raymath.h>'
+linklib 'raylib'
+if ccinfo.is_windows then
+  linklib 'glfw3'
+else
+  linklib 'glfw'
+end
 ]]
 
 global CELL_SIZE <comptime> = 48

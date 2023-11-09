@@ -1,4 +1,4 @@
-require 'raylib'
+require 'raylib-bindings'
 
 local fame_time: float32
 local Timer = @record {

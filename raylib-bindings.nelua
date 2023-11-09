@@ -1242,3 +1242,29 @@ global M_2_PI: float64 <comptime> = 0.6366197723675814
 global M_2_SQRTPI: float64 <comptime> = 1.1283791670955126
 global M_SQRT2: float64 <comptime> = 1.4142135623730951
 global M_SQRT1_2: float64 <comptime> = 0.7071067811865476
+global LIGHTGRAY: Color <cimport,nodecl>
+global GRAY: Color <cimport,nodecl>
+global DARKGRAY: Color <cimport,nodecl>
+global YELLOW: Color <cimport,nodecl>
+global GOLD: Color <cimport,nodecl>
+global ORANGE: Color <cimport,nodecl>
+global PINK: Color <cimport,nodecl>
+global RED: Color <cimport,nodecl>
+global MAROON: Color <cimport,nodecl>
+global GREEN: Color <cimport,nodecl>
+global LIME: Color <cimport,nodecl>
+global DARKGREEN: Color <cimport,nodecl>
+global SKYBLUE: Color <cimport,nodecl>
+global BLUE: Color <cimport,nodecl>
+global DARKBLUE: Color <cimport,nodecl>
+global PURPLE: Color <cimport,nodecl>
+global VIOLET: Color <cimport,nodecl>
+global DARKPURPLE: Color <cimport,nodecl>
+global BEIGE: Color <cimport,nodecl>
+global BROWN: Color <cimport,nodecl>
+global DARKBROWN: Color <cimport,nodecl>
+global WHITE: Color <cimport,nodecl>
+global BLACK: Color <cimport,nodecl>
+global BLANK: Color <cimport,nodecl>
+global MAGENTA: Color <cimport,nodecl>
+global RAYWHITE: Color <cimport,nodecl>
