@@ -1,5 +1,3 @@
-require 'raylib-bindings'
-
 local fame_time: float32
 local Timer = @record {
   start_time: number
@@ -14,7 +12,7 @@ function Timer:restart()
 end
 
 function Timer.update_frame()
-  fame_time = GetTime()
+  fame_time = riv.time
 end
 
 return Timer

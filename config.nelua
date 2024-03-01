@@ -1,79 +1,11 @@
-##[[
--- disable the garbage collector
-pragmas.nogc = true
-
-local compiler = require 'nelua.ccompiler'
-if compiler.get_cc_info().is_emscripten then
-  PLATFORM_WEB = true
-  primtypes.integer = primtypes.int32
-  primtypes.uinteger = primtypes.uint32
-  primtypes.number = primtypes.float32
-  cflags '-Oz -fno-plt -flto'
-  cflags '-DGRAPHICS_API_OPENGL_ES2'
-  cflags '-s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s TOTAL_MEMORY=16777216'
-  cflags '-I/home/bart/apps/raylib/src /home/bart/apps/raylib/build.web/src/libraylib.bc'
-  cflags '--preload-file assets'
-else
-  linklib 'raylib'
-end
-
-local nldecl = require 'nelua.plugins.nldecl'
-nldecl.generate_bindings_file{
-  output_file = 'raylib-bindings.nelua',
-  parse_includes = {
-    '<raylib.h>',
-    '<raymath.h>',
-  },
-  include_names = {
-    '^[A-Z]',
-  },
-  output_foot = [=[
-global LIGHTGRAY: Color <cimport,nodecl>
-global GRAY: Color <cimport,nodecl>
-global DARKGRAY: Color <cimport,nodecl>
-global YELLOW: Color <cimport,nodecl>
-global GOLD: Color <cimport,nodecl>
-global ORANGE: Color <cimport,nodecl>
-global PINK: Color <cimport,nodecl>
-global RED: Color <cimport,nodecl>
-global MAROON: Color <cimport,nodecl>
-global GREEN: Color <cimport,nodecl>
-global LIME: Color <cimport,nodecl>
-global DARKGREEN: Color <cimport,nodecl>
-global SKYBLUE: Color <cimport,nodecl>
-global BLUE: Color <cimport,nodecl>
-global DARKBLUE: Color <cimport,nodecl>
-global PURPLE: Color <cimport,nodecl>
-global VIOLET: Color <cimport,nodecl>
-global DARKPURPLE: Color <cimport,nodecl>
-global BEIGE: Color <cimport,nodecl>
-global BROWN: Color <cimport,nodecl>
-global DARKBROWN: Color <cimport,nodecl>
-global WHITE: Color <cimport,nodecl>
-global BLACK: Color <cimport,nodecl>
-global BLANK: Color <cimport,nodecl>
-global MAGENTA: Color <cimport,nodecl>
-global RAYWHITE: Color <cimport,nodecl>
-]=]
-}
-
-cinclude '<raylib.h>'
-cinclude '<raymath.h>'
-linklib 'raylib'
-if ccinfo.is_windows then
-  linklib 'glfw3'
-else
-  linklib 'glfw'
-end
-]]
-
-global CELL_SIZE <comptime> = 48
+global CELL_SIZE <comptime> = 12
 global VERT_CELLS <comptime> = 20
 global HORZ_CELLS <comptime> = 10
 global GRID_WIDTH <comptime> = CELL_SIZE*HORZ_CELLS
 global GRID_HEIGHT <comptime> = CELL_SIZE*VERT_CELLS
-global SCREEN_WIDTH <comptime> = CELL_SIZE*HORZ_CELLS + 320
-global SCREEN_HEIGHT <comptime> = CELL_SIZE*VERT_CELLS + 60
-global GRID_OFFSET_X <comptime> = 290
-global GRID_OFFSET_Y <comptime> = 30
+global SCREEN_WIDTH <comptime> = 256
+global SCREEN_HEIGHT <comptime> = 256
+global GRID_OFFSET_X <comptime> = (SCREEN_WIDTH - GRID_WIDTH)*3//4
+global GRID_OFFSET_Y <comptime> = (SCREEN_HEIGHT - GRID_HEIGHT)//2
 global CELL_MARGIN <comptime> = 1
+global Color: type = @byte

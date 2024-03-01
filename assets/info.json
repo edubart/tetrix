@@ -1,0 +1,6 @@
+{
+    "name": "Tetrix",
+    "summary": "A puzzle game where players arrange falling geometric shapes to create horizontal lines.",
+    "description": "Use arrow keys to move the tiles.",
+    "tags": ["puzzle", "2d"]
+}

@@ -1,0 +1,26 @@
+require 'config'
+require 'riv'
+require 'math'
+require 'os'
+
+local Game = require 'game'
+local Timer = require 'timer'
+
+-- Initialize game
+local game: Game
+game:load_assets()
+game:new_game()
+
+local function frame()
+  Timer.update_frame()
+  game:update()
+  game:draw()
+  riv_present()
+end
+
+repeat
+  frame()
+until riv.quit
+
+-- Cleanup
+game:destroy_assets()

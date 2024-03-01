@@ -1,5 +1,5 @@
 require 'config'
-require 'raylib-bindings'
+require 'riv'
 require 'math'
 
 local Piece = @record{
@@ -9,7 +9,7 @@ local Piece = @record{
   height: integer,
   size: integer,
   layout: [4][4]byte,
-  color: Color
+  color: uint8
 }
 
 local PIECES: [7]Piece = {
@@ -20,7 +20,7 @@ local PIECES: [7]Piece = {
       {0,0,0,0},
     },
     width=4, height=3,
-    color=SKYBLUE
+    color=RIV_COLOR_LIGHTBLUE
   },
   { size=3, layout={
       {0,1,0,0},
@@ -29,7 +29,7 @@ local PIECES: [7]Piece = {
       {0,0,0,0},
     },
     width=3, height=2,
-    color=PINK
+    color=RIV_COLOR_PINK
   },
   { size=3, layout={
       {0,1,1,0},
@@ -38,7 +38,7 @@ local PIECES: [7]Piece = {
       {0,0,0,0},
     },
     width=3, height=2,
-    color=GREEN
+    color=RIV_COLOR_GREEN
   },
   { size=3, layout={
       {1,1,0,0},
@@ -47,7 +47,7 @@ local PIECES: [7]Piece = {
       {0,0,0,0},
     },
     width=3, height=2,
-    color=RED
+    color=RIV_COLOR_RED
   },
   { size=3, layout={
       {1,0,0,0},
@@ -56,7 +56,7 @@ local PIECES: [7]Piece = {
       {0,0,0,0},
     },
     width=3, height=2,
-    color=BLUE
+    color=RIV_COLOR_LIGHTTEAL
   },
   { size=3, layout={
       {0,0,1,0},
@@ -65,7 +65,7 @@ local PIECES: [7]Piece = {
       {0,0,0,0},
     },
     width=3, height=2,
-    color=ORANGE
+    color=RIV_COLOR_ORANGE
   },
   { size=2, layout={
       {1,1,0,0},
@@ -74,12 +74,12 @@ local PIECES: [7]Piece = {
       {0,0,0,0},
     },
     width=2, height=2,
-    color=YELLOW
+    color=RIV_COLOR_YELLOW
   }
 }
 
 function Piece.random_piece()
-  local index = math.random(0, #PIECES-1)
+  local index = riv_rand_uint(#PIECES-1)
   local piece = PIECES[index]
   piece.x = (HORZ_CELLS - piece.size) // 2
   piece.y = 0
@@ -110,18 +110,17 @@ function Piece:translate(x: integer, y: integer)
 end
 
 function Piece.draw_cell(x: integer, y: integer, color: Color, shallow: boolean)
-  if color.a == 0 then return end
-  local rect: Rectangle = {
-    x = x + CELL_MARGIN,
-    y = y + CELL_MARGIN,
-    width = CELL_SIZE - CELL_MARGIN,
-    height = CELL_SIZE - CELL_MARGIN
-  }
-  local fill_color = Fade(color, 0.75)
+  if color == 0 then return end
+  local x = x + CELL_MARGIN
+  local y = y + CELL_MARGIN
+  local width = CELL_SIZE - CELL_MARGIN
+  local height = CELL_SIZE - CELL_MARGIN
   if not shallow then
-    DrawRectangleRec(rect, fill_color)
+    riv_draw_rect_fill(x, y, width, height, color)
+  else
+    riv_draw_rect_fill(x, y, width, height, RIV_COLOR_SLATE)
+    riv_draw_rect_line(x, y, width, height, color)
   end
-  DrawRectangleLinesEx(rect, 2, color)
 end
 
 function Piece:draw(x: integer, y: integer, shallow: boolean)
