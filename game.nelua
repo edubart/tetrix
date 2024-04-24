@@ -202,18 +202,15 @@ function Game:update()
 
   -- save score
   local finished_str: string = riv.quit and 'true' or 'false'
-  riv.outcard_len = riv_snprintf(riv.inoutbuffer, RIV_MMIOSIZE_INOUTBUFFER,
+  riv.outcard_len = riv_snprintf(&riv.outcard[0], RIV_SIZE_OUTCARD,
     [[JSON{"score":%d,"level":%d,"lines":%d,"frames":%u,"finished":%s}]],
       self.score, self.level, self.lines, riv.frame, finished_str)
-  riv_printf("%s\n", (@cstring)(riv.inoutbuffer))
+  riv_printf("%s\n", (@cstring)(&riv.outcard[0]))
 end
 
 local function draw_centered_text(text: string, rect: riv_recti, fontsize: integer, fgcolor: Color)
   if #text == 0 then return end
-  local textsize: riv_vec2i = riv_draw_text(text, RIV_SPRITESHEET_FONT_5X7, 0, 0, -1, fontsize, fontsize, fontsize, fontsize)
-  local pos: riv_vec2i = { rect.x + (rect.width - textsize.x) // 2,
-                           rect.y + (rect.height - textsize.y) // 2 }
-  riv_draw_text(text, RIV_SPRITESHEET_FONT_5X7, pos.x, pos.y, fgcolor, fontsize, fontsize, fontsize, fontsize)
+  riv_draw_text(text, RIV_SPRITESHEET_FONT_5X7, RIV_CENTER, rect.x + rect.width//2, rect.y + rect.height//2, fontsize, fgcolor)
 end
 
 local function draw_titled_number(title: string, num: integer, rect: riv_recti)
@@ -250,7 +247,7 @@ function Game:draw_piece()
 end
 
 function Game:draw()
-  riv_clear_screen(RIV_COLOR_DARKSLATE)
+  riv_clear(RIV_COLOR_DARKSLATE)
   self:draw_score()
   self.board:draw()
   self:draw_next_piece()
