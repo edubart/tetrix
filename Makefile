@@ -1,14 +1,18 @@
 NAME=tetrix
 DATA_FILES=info.json
 COMP=xz
-RIVEMU=rivemu
-RIVEMU_EXEC=$(RIVEMU) -quiet -no-window -sdk -workspace -exec
+RIVEMU_RUN=rivemu
+RIVEMU_EXEC=rivemu -quiet -no-window -sdk -workspace -exec
+ifneq (,$(wildcard /usr/sbin/riv-run))
+	RIVEMU_RUN=riv-run
+	RIVEMU_EXEC=
+endif
 CFLAGS=$(shell $(RIVEMU_EXEC) riv-opt-flags -Ospeed)
 
 build: $(NAME).sqfs
 
 run: $(NAME).sqfs
-	$(RIVEMU) $<
+	$(RIVEMU_RUN) $<
 
 clean:
 	rm -f *.sqfs *.elf *.c
