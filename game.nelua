@@ -205,7 +205,6 @@ function Game:update()
   riv.outcard_len = riv_snprintf(&riv.outcard[0], RIV_SIZE_OUTCARD,
     [[JSON{"score":%d,"level":%d,"lines":%d,"frames":%u,"finished":%s}]],
       self.score, self.level, self.lines, riv.frame, finished_str)
-  riv_printf("%s\n", (@cstring)(&riv.outcard[0]))
 end
 
 local function draw_centered_text(text: string, rect: riv_recti, fontsize: integer, fgcolor: Color)

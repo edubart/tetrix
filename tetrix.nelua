@@ -1,3 +1,5 @@
+## pragma{nogc = true, noerrorloc = true}
+
 require 'config'
 require 'riv'
 require 'math'
