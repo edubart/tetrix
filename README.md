@@ -5,7 +5,7 @@ A Tetris like game written in [Nelua](https://nelua.io/) for [RIV](https://docs.
 You can play it in your browser
 [here](https://emulator.rives.io/#cartridge=https://raw.githubusercontent.com/edubart/cartridges/main/tetrix.sqfs)
 
-![Screenshot](https://raw.githubusercontent.com/edubart/tetrix/master/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/edubart/tetrix/master/tetrix.png)
 
 ## Compiling
 
