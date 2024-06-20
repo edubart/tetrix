@@ -2,5 +2,12 @@
     "name": "Tetrix",
     "summary": "A puzzle game where players arrange falling geometric shapes to create horizontal lines.",
     "description": "Use arrow keys to move the tiles.",
-    "tags": ["puzzle", "2d"]
+    "tags": ["puzzle", "2d"],
+    "authors": [{
+        "name": "Eduardo Bart",
+        "link": "https://github.com/edubart"
+    }],
+    "links": [
+        "https://github.com/edubart/tetrix"
+    ]
 }
