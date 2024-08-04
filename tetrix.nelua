@@ -14,7 +14,6 @@ global Color: type = @byte
 
 require 'riv'
 require 'math'
-require 'os'
 
 --------------------------------------------------------------------------------
 -- Piece
@@ -474,13 +473,12 @@ function Game:update()
       self.score, self.level, self.lines, riv.frame, finished_str)
 end
 
-local function draw_centered_text(text: string, rect: riv_recti, fontsize: integer, fgcolor: Color)
-  if #text == 0 then return end
+local function draw_centered_text(text: cstring, rect: riv_recti, fontsize: integer, fgcolor: Color)
   riv_draw_text(text, RIV_SPRITESHEET_FONT_5X7, RIV_CENTER, rect.x + rect.width//2, rect.y + rect.height//2, fontsize, fgcolor)
 end
 
 local function draw_titled_number(title: string, num: integer, rect: riv_recti)
-  local text <close> = tostring(num)
+  local text: cstring = riv_tprintf("%ld", num)
   riv_draw_rect_fill(rect.x, rect.y, rect.width, rect.height, RIV_COLOR_DARKSLATE)
   riv_draw_rect_line(rect.x, rect.y, rect.width, rect.height, RIV_COLOR_SLATE)
   draw_centered_text(text, rect, 1, RIV_COLOR_WHITE)
