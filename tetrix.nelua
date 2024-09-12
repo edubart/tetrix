@@ -347,11 +347,31 @@ function Game:clear_lines()
     points = 40
   end
   if points > 0 then
-    -- PlaySound(self.lineclear_sound)
+    riv_waveform(riv_waveform_desc{
+      type = RIV_WAVEFORM_NOISE,
+      attack = 0.1,
+      decay = 0.05,
+      sustain = 0.1,
+      release = 0.05,
+      start_frequency = 220,
+      end_frequency = 40,
+      amplitude = 0.25,
+      sustain_level = 0.8,
+    })
     self.lines = self.lines + num_lines
     local level = 1 + (self.lines // 10)
     if self.level ~= level then
-      -- PlaySound(self.levelup_sound)
+      riv_waveform(riv_waveform_desc{
+        type = RIV_WAVEFORM_PULSE,
+        attack = 0.015,
+        decay = 0.05,
+        sustain = 0.4,
+        release = 0.8,
+        start_frequency = 80,
+        end_frequency = 440,
+        amplitude = 0.25,
+        sustain_level = 0.5,
+      })
       self.level = level
     end
     self.score = self.score + points
@@ -413,7 +433,17 @@ function Game:rotate_current_piece(left: boolean): boolean
 end
 
 function Game:place_current_piece()
-  -- PlaySound(self.hit_sound)
+  riv_waveform(riv_waveform_desc{
+    type = RIV_WAVEFORM_SINE,
+    attack = 0.01,
+    decay = 0.04,
+    sustain = 0.05,
+    release = 0.05,
+    start_frequency = 440,
+    end_frequency = 600,
+    amplitude = 0.25,
+    sustain_level = 0.5,
+  })
   self.board:place_piece(self.cur_piece)
   self:clear_lines()
   if not self:spawn_piece() then
